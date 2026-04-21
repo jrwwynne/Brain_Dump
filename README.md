@@ -226,4 +226,97 @@ Verify `WHISPER_BINARY` points to the compiled binary and that it is executable
 **Tasks not being extracted**  
 Check the logs for the raw Ollama response. You may need a larger or different
 model. Set `OLLAMA_MODEL` to the model name you have pulled on the Ollama server.
+
+---
+
+## Continuous deployment via GitHub Actions
+
+Every push to `main` automatically deploys to the Pi and restarts the service.
+This is done using a **self-hosted GitHub Actions runner** installed on the Pi
+itself — the Pi polls GitHub, so no port forwarding or public IP is required.
+
+### 1. Register the runner on the Pi
+
+On GitHub, go to your repository → **Settings** → **Actions** → **Runners** →
+**New self-hosted runner**.
+
+Select **Linux / ARM64** (Pi 4/5) or **ARM** (Pi 3), then follow the commands
+GitHub shows — they look like this (the token will differ):
+
+```bash
+# Run these on the Pi
+mkdir -p ~/actions-runner && cd ~/actions-runner
+curl -o actions-runner-linux-arm64-2.x.x.tar.gz -L https://github.com/actions/runner/releases/download/v2.x.x/actions-runner-linux-arm64-2.x.x.tar.gz
+tar xzf actions-runner-linux-arm64-2.x.x.tar.gz
+./config.sh --url https://github.com/<your-username>/<your-repo> --token <your-token>
+```
+
+Use the exact commands and token from the GitHub UI — they expire after an hour.
+
+### 2. Install the runner as a systemd service
+
+```bash
+cd ~/actions-runner
+sudo ./svc.sh install
+sudo ./svc.sh start
+```
+
+The runner now starts automatically on boot and runs in the background.
+
+### 3. Allow the runner to restart the app service without a password
+
+The deployment workflow restarts `voice-brain-dump` with `sudo systemctl restart`.
+Grant the runner user (usually `james`) passwordless permission for that one
+command only:
+
+```bash
+sudo visudo -f /etc/sudoers.d/voice-brain-dump
+```
+
+Add this line (replace `james` with your username if different):
+
+```
+james ALL=(ALL) NOPASSWD: /bin/systemctl restart voice-brain-dump
+```
+
+### 4. Set the correct working directory in the service file
+
+The runner checks out code into `~/actions-runner/_work/<repo>/<repo>`.
+Update the `WorkingDirectory` in your systemd service to match, for example:
+
+```ini
+WorkingDirectory=/home/james/actions-runner/_work/Brain_Dump/Brain_Dump/voice_brain_dump
+EnvironmentFile=/home/james/actions-runner/_work/Brain_Dump/Brain_Dump/voice_brain_dump/.env
+ExecStart=/home/james/actions-runner/_work/Brain_Dump/Brain_Dump/voice_brain_dump/venv/bin/python app.py
+```
+
+Then reload systemd:
+
+```bash
+sudo systemctl daemon-reload
+sudo systemctl restart voice-brain-dump
+```
+
+### 5. Push to deploy
+
+```bash
+git add .
+git commit -m "your changes"
+git push origin main
+```
+
+GitHub triggers the workflow, the runner on the Pi pulls the latest code,
+updates dependencies, and restarts the service. Watch progress in the
+**Actions** tab of your repository.
+
+### Deployment pipeline summary
+
+```
+git push → GitHub Actions → self-hosted runner on Pi
+                                  │
+                                  ├─ git pull latest code
+                                  ├─ pip install -r requirements.txt
+                                  ├─ sudo systemctl restart voice-brain-dump
+                                  └─ systemctl is-active check
+```
 # Brain_Dump

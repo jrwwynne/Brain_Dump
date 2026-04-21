@@ -1,0 +1,324 @@
+/* =========================================================================
+   style.css — Voice Brain Dump UI
+   Mobile-first, lightweight, no frameworks.
+   ========================================================================= */
+
+/* -------------------------------------------------------------------------
+   Reset & base
+   ------------------------------------------------------------------------- */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --colour-bg:         #f5f5f5;
+  --colour-surface:    #ffffff;
+  --colour-border:     #e0e0e0;
+  --colour-text:       #1a1a1a;
+  --colour-muted:      #6b7280;
+  --colour-primary:    #2563eb;
+  --colour-success:    #16a34a;
+  --colour-danger:     #dc2626;
+  --colour-warning:    #d97706;
+  --colour-recording:  #dc2626;
+  --colour-processing: #d97706;
+  --colour-idle:       #16a34a;
+  --colour-error:      #dc2626;
+
+  --radius:  8px;
+  --shadow:  0 1px 3px rgba(0,0,0,0.08);
+  --gap:     1rem;
+}
+
+body {
+  background: var(--colour-bg);
+  color:      var(--colour-text);
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-size:  16px;
+  line-height: 1.5;
+}
+
+/* -------------------------------------------------------------------------
+   Layout
+   ------------------------------------------------------------------------- */
+.container {
+  max-width: 680px;
+  margin:    0 auto;
+  padding:   1rem;
+  display:   flex;
+  flex-direction: column;
+  gap:       var(--gap);
+}
+
+/* -------------------------------------------------------------------------
+   Header
+   ------------------------------------------------------------------------- */
+header {
+  padding: 1rem 0 0.5rem;
+  text-align: center;
+}
+
+header h1 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+.subtitle {
+  color: var(--colour-muted);
+  font-size: 0.9rem;
+  margin-top: 0.25rem;
+}
+
+/* -------------------------------------------------------------------------
+   Status bar
+   ------------------------------------------------------------------------- */
+.status-bar {
+  display:        flex;
+  align-items:    center;
+  gap:            0.5rem;
+  padding:        0.6rem 1rem;
+  border-radius:  var(--radius);
+  background:     var(--colour-surface);
+  border:         2px solid var(--colour-border);
+  font-size:      0.9rem;
+  flex-wrap:      wrap;
+}
+
+.status-label {
+  font-weight: 600;
+}
+
+.status-value {
+  font-weight: 700;
+}
+
+.status-time {
+  margin-left: auto;
+  color:       var(--colour-muted);
+  font-size:   0.8rem;
+}
+
+/* Status colour variants */
+.status--recording  { border-color: var(--colour-recording);  }
+.status--recording  .status-value { color: var(--colour-recording); }
+
+.status--processing { border-color: var(--colour-processing); }
+.status--processing .status-value { color: var(--colour-processing); }
+
+.status--idle       { border-color: var(--colour-idle); }
+.status--idle       .status-value { color: var(--colour-idle); }
+
+.status--error      { border-color: var(--colour-error); }
+.status--error      .status-value { color: var(--colour-error); }
+
+/* -------------------------------------------------------------------------
+   Error banner
+   ------------------------------------------------------------------------- */
+.error-banner {
+  padding:       0.75rem 1rem;
+  background:    #fef2f2;
+  border:        1px solid #fecaca;
+  border-radius: var(--radius);
+  color:         var(--colour-danger);
+  font-size:     0.9rem;
+}
+
+/* -------------------------------------------------------------------------
+   Cards
+   ------------------------------------------------------------------------- */
+.card {
+  background:    var(--colour-surface);
+  border:        1px solid var(--colour-border);
+  border-radius: var(--radius);
+  padding:       1rem;
+  box-shadow:    var(--shadow);
+}
+
+.card h2 {
+  font-size:     1rem;
+  font-weight:   600;
+  margin-bottom: 0.75rem;
+  display:       flex;
+  align-items:   center;
+  gap:           0.4rem;
+}
+
+/* -------------------------------------------------------------------------
+   Badges
+   ------------------------------------------------------------------------- */
+.badge {
+  display:       inline-flex;
+  align-items:   center;
+  justify-content: center;
+  min-width:     1.4rem;
+  height:        1.4rem;
+  padding:       0 0.35rem;
+  background:    var(--colour-primary);
+  color:         #fff;
+  border-radius: 999px;
+  font-size:     0.75rem;
+  font-weight:   700;
+}
+
+.badge--muted {
+  background: var(--colour-muted);
+}
+
+/* -------------------------------------------------------------------------
+   Transcript
+   ------------------------------------------------------------------------- */
+.transcript-text {
+  font-size:   0.9rem;
+  color:       var(--colour-muted);
+  font-style:  italic;
+  word-break:  break-word;
+}
+
+/* -------------------------------------------------------------------------
+   Add-task form
+   ------------------------------------------------------------------------- */
+.add-form {
+  display: flex;
+  gap:     0.5rem;
+}
+
+.add-form input[type="text"] {
+  flex:          1;
+  padding:       0.55rem 0.75rem;
+  border:        1px solid var(--colour-border);
+  border-radius: var(--radius);
+  font-size:     0.95rem;
+  outline:       none;
+  transition:    border-color 0.15s;
+}
+
+.add-form input[type="text"]:focus {
+  border-color: var(--colour-primary);
+}
+
+/* -------------------------------------------------------------------------
+   Task list
+   ------------------------------------------------------------------------- */
+.task-list {
+  list-style: none;
+  display:    flex;
+  flex-direction: column;
+  gap:        0.5rem;
+}
+
+.task-item {
+  display:        flex;
+  flex-direction: column;
+  gap:            0.25rem;
+  padding:        0.65rem 0.75rem;
+  border:         1px solid var(--colour-border);
+  border-radius:  var(--radius);
+  background:     var(--colour-bg);
+}
+
+.task-item--done {
+  opacity: 0.7;
+}
+
+.task-item--done .task-text {
+  text-decoration: line-through;
+  color:           var(--colour-muted);
+}
+
+.task-text {
+  font-size:   0.95rem;
+  font-weight: 500;
+  word-break:  break-word;
+}
+
+.task-meta {
+  font-size: 0.75rem;
+  color:     var(--colour-muted);
+}
+
+.task-actions {
+  display:    flex;
+  gap:        0.4rem;
+  margin-top: 0.35rem;
+  flex-wrap:  wrap;
+}
+
+/* -------------------------------------------------------------------------
+   Buttons
+   ------------------------------------------------------------------------- */
+.btn {
+  display:       inline-flex;
+  align-items:   center;
+  gap:           0.3rem;
+  padding:       0.4rem 0.75rem;
+  border:        1px solid transparent;
+  border-radius: var(--radius);
+  font-size:     0.82rem;
+  font-weight:   600;
+  cursor:        pointer;
+  transition:    background 0.15s, border-color 0.15s;
+  white-space:   nowrap;
+}
+
+.btn--primary {
+  background: var(--colour-primary);
+  color:      #fff;
+}
+.btn--primary:hover { background: #1d4ed8; }
+
+.btn--success {
+  background: var(--colour-success);
+  color:      #fff;
+}
+.btn--success:hover { background: #15803d; }
+
+.btn--danger {
+  background: transparent;
+  color:      var(--colour-danger);
+  border-color: var(--colour-danger);
+}
+.btn--danger:hover {
+  background: var(--colour-danger);
+  color:      #fff;
+}
+
+.btn--outline {
+  background:   transparent;
+  color:        var(--colour-text);
+  border-color: var(--colour-border);
+}
+.btn--outline:hover { background: var(--colour-bg); }
+
+/* -------------------------------------------------------------------------
+   Clear-completed form
+   ------------------------------------------------------------------------- */
+.clear-form {
+  margin-bottom: 0.75rem;
+}
+
+/* -------------------------------------------------------------------------
+   Empty state
+   ------------------------------------------------------------------------- */
+.empty-message {
+  font-size: 0.88rem;
+  color:     var(--colour-muted);
+  font-style: italic;
+}
+
+/* -------------------------------------------------------------------------
+   Responsive tweaks
+   ------------------------------------------------------------------------- */
+@media (max-width: 480px) {
+  header h1 { font-size: 1.4rem; }
+
+  .add-form {
+    flex-direction: column;
+  }
+
+  .add-form input[type="text"] {
+    width: 100%;
+  }
+}
